@@ -1,14 +1,20 @@
 package ru.ilezzov.plugin;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
+import com.velocitypowered.api.event.EventHandler;
+import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import org.slf4j.Logger;
+import ru.ilezzov.plugin.command.MainCommand;
 import ru.ilezzov.plugin.config.Config;
 import ru.ilezzov.plugin.config.ConfigManager;
+import ru.ilezzov.plugin.event.PreLoginListener;
 import ru.ilezzov.plugin.model.Response;
 import ru.ilezzov.plugin.properties.MyProperties;
 import ru.ilezzov.plugin.version.VersionDate;
@@ -21,14 +27,10 @@ import static ru.ilezzov.plugin.logging.Lang.*;
 import static ru.ilezzov.plugin.utils.LegacySerialize.serializeToANSI;
 
 @Plugin(id = "versionblocked", name = "VersionBlocked", version = BuildConstants.VERSION, description = BuildConstants.DESCRIPTION, url = "https://t.me/ilezovofficial", authors = {"ILeZzoV"})
-public class VersionBlocked {
-
-    @Inject
-    private static Logger logger;
-    @Inject
-    private static ProxyServer proxyServer;
-    @DataDirectory
-    private static Path dataDirectory;
+public class Main {
+    private final ProxyServer proxyServer;
+    private final Logger logger;
+    private final Path dataDirectory;
 
     private static MyProperties properties;
 
@@ -40,10 +42,17 @@ public class VersionBlocked {
 
     private static Config config;
 
+    @Inject
+    public Main(final ProxyServer proxyServer, final Logger logger, @DataDirectory final Path dataDirectory) {
+        this.proxyServer = proxyServer;
+        this.logger = logger;
+        this.dataDirectory = dataDirectory;
+    }
+
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         logger.info(STARTING_PLUGIN);
-        properties = new MyProperties();
+        properties = new MyProperties(this.logger);
 
         configFile = properties.getConfigurationFile();
         currentVersion = properties.getCurrentVersion();
@@ -58,14 +67,28 @@ public class VersionBlocked {
             return;
         }
 
+        final EventManager eventManager = this.proxyServer.getEventManager();
+        eventManager.register(this, new PreLoginListener(this.logger));
 
+        final CommandManager commandManager = this.proxyServer.getCommandManager();
+        final CommandMeta commandMeta = commandManager.metaBuilder("versionblocked")
+                .aliases("vb", "versblock")
+                .plugin(this)
+                .build();
+        commandManager.register(commandMeta, new MainCommand(proxyServer));
     }
 
-    public static Logger getLogger() {
-        return logger;
+    public static boolean reloadConfigFile() {
+        final Response<ConfigManager.ConfigStatus> response = configManager.load();
+        if (!response.success()) {
+            return false;
+        }
+
+        config = configManager.getConfig();
+        return true;
     }
 
-    private static boolean loadConfigFile() {
+    private boolean loadConfigFile() {
         final Response<ConfigManager.ConfigStatus> response = configManager.load();
         if (!response.success()) {
             final Exception e = response.error();
@@ -93,7 +116,7 @@ public class VersionBlocked {
         return true;
     }
 
-    private static boolean checkLatestVersion() {
+    private boolean checkLatestVersion() {
         final Response<Void> loadResponse = versionManager.load();
 
         if (!loadResponse.success()) {

@@ -42,8 +42,8 @@ public class Lang {
     public static final String UNEXPECTED_ERROR = "Unexpected value '%s' in %s. Expected: %s";
 
     // Version messages
-    public static final String FAILED_VERSION_CHECK = "Couldn't check the current server version: %s";
-    public static final String LATEST_VERSION = "&7You are using the &alatest &7version of the server: &6%s";
+    public static final String FAILED_VERSION_CHECK = "Couldn't check the current plugin version: %s";
+    public static final String LATEST_VERSION = "&7You are using the &alatest &7version of the plugin: &6%s";
     public static final String SUPPORTED_VERSION = "&7You are using an outdated version: &c%s \n&7We recommend installing the latest version: &6%s \n&7Download: &e%s";
     public static final String BLACKLIST_VERSION = "&7You are using a &cblocked &7version: &c%s. Launch is &cnot possible. \n&7Update the kernel to the latest version: &a%s. \n&7Download link: &e%s";
     public static final String OUTDATED_VERSION = "&7You are using a &coutdated &7version: &c%s. Launch is &cnot possible. \n&7Update the kernel to the latest version: &a%s. \n&7Download link: &e%s";

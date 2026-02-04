@@ -18,7 +18,6 @@ package ru.ilezzov.plugin.properties;
 */
 
 import org.slf4j.Logger;
-import ru.ilezzov.plugin.VersionBlocked;
 import ru.ilezzov.plugin.model.Response;
 
 import java.io.IOException;
@@ -29,22 +28,24 @@ import static ru.ilezzov.plugin.logging.Lang.*;
 
 
 public class MyProperties {
-    private final Logger logger = VersionBlocked.getLogger();
+    private final Logger logger;
     private final Properties properties = new Properties();
 
     private String currentVersion;
     private String versionFileUrl;
     private String configurationFile;
 
-    public MyProperties() {
+    public MyProperties(final Logger logger) {
+        this.logger = logger;
+
         final Response<Void> loadResponse = load();
 
         if (!loadResponse.success()) {
-            logger.error(loadResponse.message(), loadResponse.error());
+            this.logger.error(loadResponse.message(), loadResponse.error());
             return;
         }
 
-        logger.info(FILE_LOADED.formatted(".properties"));
+        this.logger.info(FILE_LOADED.formatted(".properties"));
         loadValues();
     }
 

@@ -62,6 +62,11 @@ public class ConfigManager {
             final byte[] defaultConfigBytes = in.readAllBytes();
 
             if (Files.notExists(configPath)) {
+                final Path parentDir = configPath.getParent();
+                if (parentDir != null) {
+                    Files.createDirectories(parentDir);
+                }
+
                 Files.write(configPath, defaultConfigBytes);
                 status = ConfigStatus.CREATED;
             }
@@ -91,6 +96,7 @@ public class ConfigManager {
                 if (currentFileNode.isObject()) {
                     final ObjectNode currentObjectNode = (ObjectNode) currentFileNode;
                     addMissingKeys(currentObjectNode, defaultFileNode);
+                    currentObjectNode.set("config-version", defaultFileNode.get("config-version"));
 
                     mapper.writerWithDefaultPrettyPrinter().writeValue(currentFile, currentFileNode);
                     status = ConfigStatus.UPDATED;
@@ -132,9 +138,6 @@ public class ConfigManager {
                 addMissingKeys((ObjectNode) userValue, defaultValue);
             }
         }
-
-        currentFileNode.set("config-version", defaultFileNode.get("config-version"));
-
     }
 
     public Config getConfig() {

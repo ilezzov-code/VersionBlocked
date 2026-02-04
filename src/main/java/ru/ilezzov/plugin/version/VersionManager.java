@@ -21,7 +21,7 @@ import java.net.http.HttpTimeoutException;
 import java.time.Duration;
 import java.util.List;
 
-import static ru.ilezzov.plugin.VersionBlocked.getProperties;
+import static ru.ilezzov.plugin.Main.getProperties;
 import static ru.ilezzov.plugin.logging.Lang.*;
 
 

@@ -24,7 +24,35 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Config {
     public boolean checkUpdates;
-    private String configVersion;
+    public String configVersion;
+
+    public VersionFilterSection versionFilter;
+    public MessagesSection messages;
+    public LoggingSection logging;
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class VersionFilterSection {
+        public int minVersionProtocol;
+        public int maxVersionProtocol;
+        public List<Integer> blockedProtocols;
+        public boolean kickConnected;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class MessagesSection {
+        public String mainCommand;
+        public String mainCommandReload;
+        public String mainCommandReloadError;
+        public String mainCommandPermissionError;
+        public String kickReason;
+        public String checkedPlayers;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class LoggingSection {
+        public boolean enable;
+        public String format;;
+    }
 
     public Config() {}
 }
