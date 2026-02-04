@@ -1,0 +1,25 @@
+{
+  "latest": {
+    "version": "1.0.0",
+    "release_date": "",
+    "download_url": "",
+    "changes": [
+      "The first version"
+    ]
+  },
+  "compatibility": {
+    "min_required_version": "1.0.0",
+    "blacklisted_versions": [
+      "1.0.0-SNAPSHOT"
+    ]
+  },
+  "history": [
+    {
+      "version": "1.0.0",
+      "changes": [
+        "The first version"
+      ]
+    }
+  ],
+  "inherit": true
+}
