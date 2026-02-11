@@ -1,0 +1,34 @@
+# The plugin supports all types of message formatting.
+# LEGACY — Color via & / § and HEX via &#rrggbb / §#rrggbb or &x&r&r&g&g&b&b / §x§r§r§g§g§b§b
+# LEGACY_ADVANCED — Color and HEX via &##rrggbb / §##rrggbb
+# MINI_MESSAGE — Color via <color>. More details — https://docs.advntr.dev/minimessage/index.html
+# And all formats available at https://www.birdflop.com/resources/rgb/
+# You can use all formats simultaneously in one message. The plugin supports this.
+
+plugin:
+  prefix: "<gold>VersionBlocked <dark_gray>|" # Plugin prefix. Use <prefix> in messages
+  prefix-error: "<red>VersionBlocked <dark_gray>|" # Error prefix. Use <prefix_error> in messages
+  reload: "<prefix> <gray>Plugin successfully &areloaded"
+  has-error-reload: "<prefix> <gray>An error occurred while reloading the plugin: <red><error>"
+  has-error: "<prefix> <gray>An error occurred while executing the command O_o → <red><error>"
+  has-error-check-version: "<prefix> <gray>Failed to retrieve the latest plugin version"
+  use-latest-version: "<prefix> <gray>You are using the latest <gray>plugin version: <yellow><latest_vers>"
+  use-outdated-version: "<prefix> <gray>You are using an outdated version: <red><current_vers> <red><bold>Startup impossible!</bold>\n<gray>Please install the latest version: <yellow><latest_vers> \n<gray>Download: <click:open_url:<download_link>><yellow><download_link>"
+  use-supported-version: "<prefix> <gray>You are using a supported version <yellow><current_vers><gray>, but we recommend updating to <yellow><latest_vers> \n<gray>Download: <click:open_url:<download_link>><yellow><download_link>"
+  use-blacklist-version: "<prefix> <gray>You are using a blacklisted version: <red><current_vers> <red><bold>Startup impossible!</bold>\n<gray>Please install the latest version: <yellow><latest_vers> \n<gray>Download: <click:open_url:<download_link>><yellow><download_link>"
+
+messages:
+  main-command: "<prefix> <gray>Plugin commands:\n\n<yellow>/versionblocked reload <white>— reload configuration"
+  main-command-reload: "<prefix> <gray>Configuration reloaded"
+  main-command-reload-error: "<prefix_error> <gray>An error occurred while reloading the configuration"
+  main-command-permission-error: "<prefix> <gray>You do not have permission to execute this command"
+
+  kick-reason: |
+    <b><gradient:#FF7272:#FFC976>VersionBlocked</gradient></b>
+    
+    <#F0EDFF>You are using an unsupported game version. Please update your client to <yellow>1.21-1.21.x
+
+  checked-players: "<prefix> <white>Players checked: <yellow><checked_players><white>, kicked: <yellow><kicked_players>"
+
+# Internal configuration version. Do not edit!
+config-version: ${project.version}

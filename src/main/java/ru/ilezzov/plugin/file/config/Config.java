@@ -1,4 +1,4 @@
-package ru.ilezzov.plugin.config;
+package ru.ilezzov.plugin.file.config;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -25,9 +25,9 @@ import java.util.List;
 public class Config {
     public boolean checkUpdates;
     public String configVersion;
+    public String lang;
 
     public VersionFilterSection versionFilter;
-    public MessagesSection messages;
     public LoggingSection logging;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -39,19 +39,9 @@ public class Config {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class MessagesSection {
-        public String mainCommand;
-        public String mainCommandReload;
-        public String mainCommandReloadError;
-        public String mainCommandPermissionError;
-        public String kickReason;
-        public String checkedPlayers;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class LoggingSection {
         public boolean enable;
-        public String format;;
+        public String format;
     }
 
     public Config() {}

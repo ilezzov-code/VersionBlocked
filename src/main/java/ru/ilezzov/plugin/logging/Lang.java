@@ -22,8 +22,7 @@ public class Lang {
     public static final String FILE_CREATED = "File '%s' has been created successfully";
     public static final String FILE_LOADED = "File '%s' has been loaded successfully";
     public static final String FILE_UPDATED = "File '%s' has been updated and new parameters have been added";
-    public static final String VERSION_LOADED = "VersionDate has been loaded";
-    public static final String STOPPING_PLUGIN = "Stoping plugin";
+    public static final String STOPPING_PLUGIN = "Stopping plugins";
 
     // Error Messages
     public static final String RESOURCE_NOT_FOUD_ERROR = "Internal resource '%s' not found in the source JAR file";
@@ -40,11 +39,4 @@ public class Lang {
     public static final String NOT_FOUND_ERROR = "The version file could not be retrieved. The server returned a 404 error.";
     public static final String CRITICAL_REQUEST_ERROR = "Critical request initialization error: %s";
     public static final String UNEXPECTED_ERROR = "Unexpected value '%s' in %s. Expected: %s";
-
-    // Version messages
-    public static final String FAILED_VERSION_CHECK = "Couldn't check the current plugin version: %s";
-    public static final String LATEST_VERSION = "&7You are using the &alatest &7version of the plugin: &6%s";
-    public static final String SUPPORTED_VERSION = "&7You are using an outdated version: &c%s \n&7We recommend installing the latest version: &6%s \n&7Download: &e%s";
-    public static final String BLACKLIST_VERSION = "&7You are using a &cblocked &7version: &c%s. Launch is &cnot possible. \n&7Update the kernel to the latest version: &a%s. \n&7Download link: &e%s";
-    public static final String OUTDATED_VERSION = "&7You are using a &coutdated &7version: &c%s. Launch is &cnot possible. \n&7Update the kernel to the latest version: &a%s. \n&7Download link: &e%s";
 }

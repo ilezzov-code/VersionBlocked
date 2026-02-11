@@ -1,3 +1,37 @@
+<div align="center">
+    <h1>VersionBlocked</h1>
+    <p>Заблокируй вход на сервер с неподдерживаемых версий</p>
+</div>
+
+### <a href="https://github.com/ilezzov-code/VersionBlocked/tree/main"><img src="img/flags/en.svg" width=15px> Select English README.md</a>
+
+##  <a>Оглавление</a>
+
+- [Описание](#about)
+- [Особенности](#features)
+- [Config.yml](#config)
+- [Команды](#commands)
+- [Ссылки](#links)
+- [Поддержать разработчика](#donate)
+- [Сообщить об ошибке](https://github.com/ilezzov-code/VersionBlocked/issues)
+
+
+## <a id="about">Описание</a>
+
+**VersionBlocked** — это уникальный плагин, который позволяет ограничить вход игрокам с неподдерживаемых версий клиента.
+
+## <a id="features">Особенности</a>
+* Возможность указать диапазон (от минимальной версии до максимальной версии)
+* Возможность выборочно блокировать версии
+* Настраиваемый экран кика с сервера
+* Поддержка MiniMessages
+
+## <a id="config">Config.yml</a>
+
+<details>
+    <summary>Посмотреть config.yml</summary>
+
+```yaml
 # ██╗░░░██╗███████╗██████╗░░██████╗██╗░█████╗░███╗░░██╗██████╗░██╗░░░░░░█████╗░░█████╗░██╗░░██╗███████╗██████╗░
 # ██║░░░██║██╔════╝██╔══██╗██╔════╝██║██╔══██╗████╗░██║██╔══██╗██║░░░░░██╔══██╗██╔══██╗██║░██╔╝██╔════╝██╔══██╗
 # ╚██╗░██╔╝█████╗░░██████╔╝╚█████╗░██║██║░░██║██╔██╗██║██████╦╝██║░░░░░██║░░██║██║░░╚═╝█████═╝░█████╗░░██║░░██║
@@ -107,3 +141,47 @@ logging:
 # Internal configuration version. Do not modify!
 # Внутренняя версия конфигурации. Не редактируйте!
 config-version: ${project.version}
+```
+
+</details>
+
+## <a id="commands">Команды (/команда → /псевдоним1, /псевдоним2, ... ※ `право`)</a>
+
+### /versionblocked → /vb ※ `versionblocked.main_comamnd` 
+
+* Доступ к главной команде плагина
+
+### /versionblocked reload → /vb reload ※ `versionblocked.main_comamnd.reload`
+
+* Перезагрузить конфигурацию плагина
+
+## <a id="minimessage-support">Поддержка MiniMessage</a>
+
+Плагин поддерживает любые виды форматирования текста в Minecraft
+
+- **LEGACY** — Цвет через & / § и HEX через &#rrggbb / §#rrggbb или &x&r&r&g&g&b&b / §x§r§r§g§g§b§b
+- **LEGACY_ADVANCED** — Цвет и HEX через &##rrggbb / §##rrggbb
+- **MINI_MESSAGE** — Цвет через <цвет> Подробнее — https://docs.advntr.dev/minimessage/index.html
+
+И все форматы доступные на https://www.birdflop.com/resources/rgb/
+Вы можете использовать все форматы одновременно в одном сообщении.
+
+## <a id="links">Ссылки</a>
+
+* Связаться: https://t.me/ilezovofficial
+* Telegram Channel: https://t.me/ilezzov
+
+## <a id="donate">Поддержать разработчика</a>
+
+* DA: https://www.donationalerts.com/r/ilezov
+* YooMoney: https://yoomoney.ru/to/4100118180919675
+* Telegram Gift: https://t.me/ilezovofficial
+* TON: UQCInXoHOJAlMpZ-8GIHqv1k0dg2E4pglKAIxOf3ia5xHmKV
+* BTC: 1KCM1QN9TNYRevvQD63UF81oBRSK67vCon
+* Card: 5536914188326494
+
+## Found an issue or have a question? Create a new issue — https://github.com/ilezzov-code/VersionBlocked/issues/new
+
+## <a id="license">Лицензия</a>
+
+Этот проект распространяется под лицензией `GPL-3.0 License`. Подробнее см. в файле [LICENSE](LICENSE).

@@ -5,16 +5,16 @@ import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.Component;
-import org.checkerframework.checker.units.qual.C;
 import ru.ilezzov.plugin.Main;
-import ru.ilezzov.plugin.config.Config;
+import ru.ilezzov.plugin.file.config.Config;
+import ru.ilezzov.plugin.manager.PlaceholderManager;
 import ru.ilezzov.plugin.permission.Permissions;
-import ru.ilezzov.plugin.utils.LegacySerialize;
 
 import java.util.Collection;
 import java.util.List;
 
-import static ru.ilezzov.plugin.utils.LegacySerialize.*;
+import static ru.ilezzov.plugin.message.PluginMessage.*;
+import static ru.ilezzov.plugin.permission.Permissions.MAIN_COMMAND_RELOAD;
 
 /*
  * Copyright (C) 2024-2026 ILeZzoV
@@ -35,6 +35,7 @@ import static ru.ilezzov.plugin.utils.LegacySerialize.*;
 
 public class MainCommand implements SimpleCommand {
     private final ProxyServer proxyServer;
+    private final PlaceholderManager placeholder = new PlaceholderManager();
 
     public MainCommand(final ProxyServer proxyServer) {
         this.proxyServer = proxyServer;
@@ -44,41 +45,40 @@ public class MainCommand implements SimpleCommand {
     public void execute(final Invocation invocation) {
         final CommandSource source = invocation.source();
         final String[] args = invocation.arguments();
-        final Config.MessagesSection messagesSection = Main.getConfig().messages;
 
         if (args.length == 0) {
-            source.sendMessage(serialize(messagesSection.mainCommand));
+            source.sendMessage(mainCommand(placeholder));
             return;
         }
 
         switch (args[0]) {
             case "reload" -> {
-                if (!source.hasPermission(Permissions.MAIN_COMMAND_RELOAD)) {
-                    source.sendMessage(serialize(messagesSection.mainCommandPermissionError));
+                if (!source.hasPermission(MAIN_COMMAND_RELOAD)) {
+                    source.sendMessage(mainCommandPermissionError(placeholder));
                     return;
                 }
 
-                if (Main.reloadConfigFile()) {
-                    source.sendMessage(serialize(messagesSection.mainCommandReload));
+                if (Main.reloadFiles()) {
+                    source.sendMessage(mainCommandReload(placeholder));
                 } else {
-                    source.sendMessage(serialize(messagesSection.mainCommandReloadError));
+                    source.sendMessage(mainCommandReloadError(placeholder));
                 }
 
                 if (Main.getConfig().versionFilter.kickConnected) {
                     final int[] response =  checkAllPlayerVersion();
-                    final Component message = LegacySerialize.serialize(messagesSection.checkedPlayers.replace("{checked_players}", String.valueOf(response[0])).replace("{kicked_players}", String.valueOf(response[1])));
-                    source.sendMessage(message);
+                    this.placeholder.addPlaceholder("<checked_players>", response[0]).addPlaceholder("<kicked_players>", response[1]);
+                    source.sendMessage(checkedPlayers(placeholder));
 
                 }
             }
-            default -> source.sendMessage(serialize(messagesSection.mainCommand));
+            default -> source.sendMessage(mainCommand(placeholder));
         }
     }
 
     private int[] checkAllPlayerVersion() {
         final Config config = Main.getConfig();
         final Config.VersionFilterSection versionFilterSection = config.versionFilter;
-        final Component reason = LegacySerialize.serialize(config.messages.kickReason);
+        final Component reason = kickReason(placeholder);
 
         final Collection<Player> players = proxyServer.getAllPlayers();
 

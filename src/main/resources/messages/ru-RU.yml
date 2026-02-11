@@ -1,0 +1,34 @@
+# Плагин поддерживает все виды форматирования сообщений.
+# LEGACY — Цвет через & / § и HEX через &#rrggbb / §#rrggbb или &x&r&r&g&g&b&b / §x§r§r§g§g§b§b
+# LEGACY_ADVANCED — Цвет и HEX через &##rrggbb / §##rrggbb
+# MINI_MESSAGE — Цвет через <цвет> Подробнее — https://docs.advntr.dev/minimessage/index.html
+# И все форматы доступные на https://www.birdflop.com/resources/rgb/
+# Вы можете использовать все форматы одновременно в одном сообщении. Плагин это поддерживает
+
+plugin:
+  prefix: "<gold>VersionBlocked <dark_gray>|" # Префикс плагина. Используйте <prefix> в сообщениях
+  prefix-error: "<red>VersionBlocked <dark_gray>|" # Префикс при ошибке. Используйте <prefix_error> в сообщениях
+  reload: "<prefix> <gray>Плагин успешно &aперезагружен"
+  has-error-reload: "<prefix> <gray>Возникла ошибка при перезагрузке плагина: <red><error>"
+  has-error: "<prefix> <gray>Возникла ошибка при выполнении команды O_o → <red><error>"
+  has-error-check-version: "<prefix> <gray>Не удалось получить последнюю версию плагина"
+  use-latest-version: "<prefix> <gray>Вы используете последнюю <gray>версию плагина: <yellow><latest_vers>"
+  use-outdated-version: "<prefix> <gray>Вы используете устаревшую версию плагина: <red><current_vers> <red><bold>Запуск невозможен!</bold>\n<gray>Установите последнюю версию плагина: <yellow><latest_vers> \n<gray>Скачать: <click:open_url:<download_link>><yellow><download_link>"
+  use-supported-version: "<prefix> <gray>Вы используете поддерживаемую версию плагина <yellow><current_vers><gray>, но рекомундуем обновиться до последнедней <yellow><latest_vers> \n<gray>Скачать: <click:open_url:<download_link>><yellow><download_link>"
+  use-blacklist-version: "<prefix> <gray>Вы используете заблокированную версию плагина: <red><current_vers> <red><bold>Запуск невозможен!</bold>\n<gray>Установите последнюю версию плагина: <yellow><latest_vers> \n<gray>Скачать: <click:open_url:<download_link>><yellow><download_link>"
+
+messages:
+  main-command: "<prefix> <gray>Команды плагина:\n\n<yellow>/versionblocked reload <white>— перезагрузить конфигурацию"
+  main-command-reload: "<prefix> <gray>Конфигурация перезагружена"
+  main-command-reload-error: "<prefix_error> <gray>Возникла ошибка при перезагрузке конфигурации"
+  main-command-permission-error: "<prefix> <gray>У вас нет прав для выполнения этой команды"
+
+  kick-reason: |
+    <b><gradient:#FF7272:#FFC976>VersionBlocked</gradient></b>
+    
+    <#F0EDFF>Вы используете неподдерживаемую версию игры. Обновите ваш клиент до <yellow>1.21-1.21.x
+    
+  checked-players: "<prefix> <white>Проверено игроков: <yellow><checked_players><white>, из них кикнуто: <yellow><kicked_players>"
+
+# Внутренняя версия конфигурации. Не редактируйте!
+config-version: ${project.version}

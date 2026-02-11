@@ -61,6 +61,13 @@ public class LegacySerialize {
         return ANSIComponentSerializer.ansi().serialize(serialize(message));
     }
 
+    public static String serializeToANSI(final Component component) {
+        if (component == null) {
+            return "";
+        }
+        return ANSIComponentSerializer.ansi().serialize(component);
+    }
+
     private static String legacySerialize(final String message) {
         String serializeMessage = translateAlternateCodeColor('&', message);
 

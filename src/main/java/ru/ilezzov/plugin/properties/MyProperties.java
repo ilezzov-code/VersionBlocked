@@ -26,7 +26,6 @@ import java.util.Properties;
 
 import static ru.ilezzov.plugin.logging.Lang.*;
 
-
 public class MyProperties {
     private final Logger logger;
     private final Properties properties = new Properties();

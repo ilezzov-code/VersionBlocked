@@ -1,3 +1,37 @@
+<div align="center">
+    <h1>VersionBlocked</h1>
+    <p>Block access to the server from unsupported versions</p>
+</div>
+
+### <a href="https://github.com/ilezzov-code/VersionBlocked/blob/main/README_RU.md"><img src="img/flags/ru.svg" width=15px> Прочитать на русском README_RU.md</a>
+
+##  <a>Table of contents</a>
+
+- [About](#about)
+- [Features](#features)
+- [Config.yml](#config)
+- [Commands](#commands)
+- [Links](#links)
+- [Buy me coffee](#donate)
+- [Report a bug](https://github.com/ilezzov-code/VersionBlocked/issues)
+
+
+## <a id="about">About</a>
+
+**VersionBlocked** — s a unique plugin that allows you to restrict access to players with unsupported client versions.
+
+## <a id="features">Features</a>
+* Ability to specify a range (from the minimum version to the maximum version)
+* Ability to selectively block versions
+* Customizable kick screen from the server
+* Supporting MiniMessages
+
+## <a id="config">Config.yml</a>
+
+<details>
+    <summary>Посмотреть config.yml</summary>
+
+```yaml
 # ██╗░░░██╗███████╗██████╗░░██████╗██╗░█████╗░███╗░░██╗██████╗░██╗░░░░░░█████╗░░█████╗░██╗░░██╗███████╗██████╗░
 # ██║░░░██║██╔════╝██╔══██╗██╔════╝██║██╔══██╗████╗░██║██╔══██╗██║░░░░░██╔══██╗██╔══██╗██║░██╔╝██╔════╝██╔══██╗
 # ╚██╗░██╔╝█████╗░░██████╔╝╚█████╗░██║██║░░██║██╔██╗██║██████╦╝██║░░░░░██║░░██║██║░░╚═╝█████═╝░█████╗░░██║░░██║
@@ -107,3 +141,47 @@ logging:
 # Internal configuration version. Do not modify!
 # Внутренняя версия конфигурации. Не редактируйте!
 config-version: ${project.version}
+```
+
+</details>
+
+## <a id="commands">Commands (/command → /aliase1, /aliase2, ... ※ `permission`)</a>
+
+### /versionblocked → /vb ※ `versionblocked.main_comamnd`
+
+* Access to the main plugin command
+
+### /versionblocked reload → /vb reload ※ `versionblocked.main_comamnd.reload`
+
+* Reload the plugin configuration
+
+## <a id="minimessage-support">Supporting MiniMessage</a>
+
+The plugin supports all kinds of text formatting in Minecraft
+
+- **LEGACY** - Color via & / § and HEX via &#rrggbb / §#rrggbb or &x&r&r&g&g&b&b / §x§r§r§g§g§b§b
+- **LEGACY_ADVANCED** - Color and HEX via &##rrggbb / §##rrggbb
+- **MINI_MESSAGE** - Color via <color> More information is available at https://docs.advntr.dev/minimessage/index.html
+
+And all formats available at https://www.birdflop.com/resources/rgb/
+You can use all formats simultaneously in one message.
+
+## <a id="links">Links</a>
+
+* Write me: https://t.me/ilezovofficial
+* Telegram Channel: https://t.me/ilezzov
+
+## <a id="donate">Buy me coffee</a>
+
+* DA: https://www.donationalerts.com/r/ilezov
+* YooMoney: https://yoomoney.ru/to/4100118180919675
+* Telegram Gift: https://t.me/ilezovofficial
+* TON: UQCInXoHOJAlMpZ-8GIHqv1k0dg2E4pglKAIxOf3ia5xHmKV
+* BTC: 1KCM1QN9TNYRevvQD63UF81oBRSK67vCon
+* Card: 5536914188326494
+
+## Found an issue or have a question? Create a new issue — https://github.com/ilezzov-code/VersionBlocked/issues/new
+
+## <a id="license">License</a>
+
+This project is distributed under the `GPL-3.0 License`. For more information, see the [LICENSE](LICENSE) file.

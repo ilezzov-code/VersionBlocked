@@ -1,4 +1,4 @@
-package ru.ilezzov.plugin.config;
+package ru.ilezzov.plugin.file;
 
 /*
  * Copyright (C) 2024-2026 ILeZzoV
@@ -38,23 +38,26 @@ import java.util.Map;
 
 import static ru.ilezzov.plugin.logging.Lang.*;
 
-public class ConfigManager {
+public class FileManager<T> {
     private static final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    private final Class<T> clazz;
 
     private final String file;
     private final Path configPath;
-    private Config config;
+    private T fileObject;
 
-    public ConfigManager(final Path dataFolder, final String file) {
+    public FileManager(final Path dataFolder, final String file, final Class<T> clazz) {
         this.file = file;
         this.configPath = dataFolder.resolve(file);
+        this.clazz = clazz;
+
         mapper.setPropertyNamingStrategy(PropertyNamingStrategies.KEBAB_CASE);
     }
 
     public Response<ConfigStatus> load() {
         ConfigStatus status = ConfigStatus.LOADED;
 
-        try (final InputStream in = ConfigManager.class.getClassLoader().getResourceAsStream(file)) {
+        try (final InputStream in = FileManager.class.getClassLoader().getResourceAsStream(file)) {
             if (in == null) {
                 return Response.error(RESOURCE_NOT_FOUD_ERROR.formatted(file));
             }
@@ -105,7 +108,7 @@ public class ConfigManager {
                 }
             }
 
-            this.config = mapper.readValue(currentFile, Config.class);
+            this.fileObject = mapper.readValue(currentFile, clazz);
             return Response.ok(status);
         } catch (JsonParseException e) {
             return Response.error(SYNTAX_ERROR.formatted(e.getOriginalMessage()), e);
@@ -140,8 +143,8 @@ public class ConfigManager {
         }
     }
 
-    public Config getConfig() {
-        return this.config;
+    public T getFileObject() {
+        return this.fileObject;
     }
 
     public enum ConfigStatus {

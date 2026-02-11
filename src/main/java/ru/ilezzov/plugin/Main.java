@@ -3,18 +3,20 @@ package ru.ilezzov.plugin;
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
-import com.velocitypowered.api.event.EventHandler;
 import com.velocitypowered.api.event.EventManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 import ru.ilezzov.plugin.command.MainCommand;
-import ru.ilezzov.plugin.config.Config;
-import ru.ilezzov.plugin.config.ConfigManager;
+import ru.ilezzov.plugin.file.config.Config;
+import ru.ilezzov.plugin.file.FileManager;
 import ru.ilezzov.plugin.event.PreLoginListener;
+import ru.ilezzov.plugin.file.message.Messages;
+import ru.ilezzov.plugin.manager.PlaceholderManager;
 import ru.ilezzov.plugin.model.Response;
 import ru.ilezzov.plugin.properties.MyProperties;
 import ru.ilezzov.plugin.version.VersionDate;
@@ -22,12 +24,15 @@ import ru.ilezzov.plugin.version.VersionManager;
 import ru.ilezzov.plugin.version.VersionType;
 
 import java.nio.file.Path;
+import java.util.function.Consumer;
 
 import static ru.ilezzov.plugin.logging.Lang.*;
+import static ru.ilezzov.plugin.message.PluginMessage.*;
 import static ru.ilezzov.plugin.utils.LegacySerialize.serializeToANSI;
 
-@Plugin(id = "versionblocked", name = "VersionBlocked", version = BuildConstants.VERSION, description = BuildConstants.DESCRIPTION, url = "https://t.me/ilezovofficial", authors = {"ILeZzoV"})
+@Plugin(id = "versionblocked", name = "VersionBlocked", version = ru.ilezzov.plugin.BuildConstants.VERSION, description = ru.ilezzov.plugin.BuildConstants.DESCRIPTION, url = "https://t.me/ilezovofficial", authors = {"ILeZzoV"})
 public class Main {
+    private final Metrics.Factory metricsFactory;
     private final ProxyServer proxyServer;
     private final Logger logger;
     private final Path dataDirectory;
@@ -36,17 +41,27 @@ public class Main {
 
     private static String currentVersion;
     private static String configFile;
+    private static String messageFile;
 
     private static VersionManager versionManager;
-    private static ConfigManager configManager;
 
+    private static FileManager<Config> configFileManager;
     private static Config config;
 
+    private static FileManager<Messages> messagesFileManager;
+    private static Messages messages;
+
+    private PlaceholderManager placeholder;
+
+    private final int pluginId = 29480;
+    private Metrics metrics;
+
     @Inject
-    public Main(final ProxyServer proxyServer, final Logger logger, @DataDirectory final Path dataDirectory) {
+    public Main(final ProxyServer proxyServer, final Logger logger, @DataDirectory final Path dataDirectory, final Metrics.Factory metricsFactory) {
         this.proxyServer = proxyServer;
         this.logger = logger;
         this.dataDirectory = dataDirectory;
+        this.metricsFactory = metricsFactory;
     }
 
     @Subscribe
@@ -57,14 +72,28 @@ public class Main {
         configFile = properties.getConfigurationFile();
         currentVersion = properties.getCurrentVersion();
 
-        configManager = new ConfigManager(dataDirectory, configFile);
-        if (!loadConfigFile()) {
+        configFileManager = new FileManager<>(dataDirectory, configFile, Config.class);
+        if (!loadFile(configFileManager, value -> config = value, configFile)) {
+            logger.info(STOPPING_PLUGIN);
             return;
         }
 
-        versionManager = new VersionManager();
-        if(!checkLatestVersion()) {
+        messageFile = getMessagesFilePath();
+
+        messagesFileManager = new FileManager<>(dataDirectory, messageFile, Messages.class);
+        if (!loadFile(messagesFileManager, value -> messages = value, messageFile)) {
+            logger.info(STOPPING_PLUGIN);
             return;
+        }
+
+        this.placeholder = new PlaceholderManager();
+
+        versionManager = new VersionManager();
+        if (config.checkUpdates) {
+            if(!checkLatestVersion()) {
+                logger.info(STOPPING_PLUGIN);
+                return;
+            }
         }
 
         final EventManager eventManager = this.proxyServer.getEventManager();
@@ -76,20 +105,31 @@ public class Main {
                 .plugin(this)
                 .build();
         commandManager.register(commandMeta, new MainCommand(proxyServer));
+        loadMetrics();
     }
 
-    public static boolean reloadConfigFile() {
-        final Response<ConfigManager.ConfigStatus> response = configManager.load();
-        if (!response.success()) {
+    private void loadMetrics() {
+        metricsFactory.make(this, pluginId);
+    }
+
+    public static boolean reloadFiles() {
+        final Response<FileManager.ConfigStatus> configResponse = configFileManager.load();
+        if (!configResponse.success()) {
             return false;
         }
 
-        config = configManager.getConfig();
+        final Response<FileManager.ConfigStatus> messagesResponse = messagesFileManager.load();
+        if (!messagesResponse.success()) {
+            return false;
+        }
+
+        config = configFileManager.getFileObject();
+        messages = messagesFileManager.getFileObject();
         return true;
     }
 
-    private boolean loadConfigFile() {
-        final Response<ConfigManager.ConfigStatus> response = configManager.load();
+    private <T> boolean loadFile(final FileManager<T> manager, final Consumer<T> setter, final String fileName) {
+        final Response<FileManager.ConfigStatus> response = manager.load();
         if (!response.success()) {
             final Exception e = response.error();
 
@@ -101,17 +141,17 @@ public class Main {
             return false;
         }
 
-        final ConfigManager.ConfigStatus status = response.data();
-        if (status == ConfigManager.ConfigStatus.CREATED) {
-            logger.info(FILE_CREATED.formatted(configFile));
+        final FileManager.ConfigStatus status = response.data();
+        if (status == FileManager.ConfigStatus.CREATED) {
+            logger.info(FILE_CREATED.formatted(fileName));
         }
 
-        if (status == ConfigManager.ConfigStatus.UPDATED) {
-            logger.info(FILE_UPDATED.formatted(configFile));
+        if (status == FileManager.ConfigStatus.UPDATED) {
+            logger.info(FILE_UPDATED.formatted(fileName));
         }
 
-        config = configManager.getConfig();
-        logger.info(FILE_LOADED.formatted(configFile));
+        setter.accept(manager.getFileObject());
+        logger.info(FILE_LOADED.formatted(fileName));
 
         return true;
     }
@@ -121,20 +161,21 @@ public class Main {
 
         if (!loadResponse.success()) {
             final Exception e = loadResponse.error();
+            this.placeholder.addPlaceholder("<error>", loadResponse.message());
 
             if (e == null) {
-                logger.error(FAILED_VERSION_CHECK.formatted(loadResponse.message()));
+                logger.info(serializeToANSI(hasErrorCheckVersion(placeholder)));
             } else {
-                logger.error(FAILED_VERSION_CHECK.formatted(loadResponse.message()), loadResponse.error());
+                logger.error(serializeToANSI(hasErrorCheckVersion(placeholder)), loadResponse.error());
             }
             versionManager = null;
             return true;
         }
-        logger.info(VERSION_LOADED);
 
         final Response<VersionType> versionTypeResponse = versionManager.check();
+        this.placeholder.addPlaceholder("<error>", versionTypeResponse.message());
         if (!versionTypeResponse.success()) {
-            logger.error(FAILED_VERSION_CHECK.formatted(versionTypeResponse.message(), versionTypeResponse.error()));
+            logger.error(serializeToANSI(hasErrorCheckVersion(placeholder)), loadResponse.error());
             return true;
         }
 
@@ -144,27 +185,30 @@ public class Main {
         final String latestVersion = versionDate.latest.version;
         final String downloadLink = versionDate.latest.downloadUrl;
 
+        this.placeholder.addPlaceholder("<latest_vers>", latestVersion);
+        this.placeholder.addPlaceholder("<current_vers>", currentVersion);
+        this.placeholder.addPlaceholder("<download_link>", downloadLink);
         switch (versionType) {
             case LATEST -> {
-                final String message = serializeToANSI(LATEST_VERSION.formatted(latestVersion));
-                logger.info(message);
+                logger.info(serializeToANSI(useLatestVersion(placeholder)));
             }
             case SUPPORTED -> {
-                final String message = serializeToANSI(SUPPORTED_VERSION.formatted(currentVersion, latestVersion, downloadLink));
-                logger.warn(message);
+                logger.info(serializeToANSI(useSupportedVersion(placeholder)));
             }
             case BLACKLIST -> {
-                final String message = serializeToANSI(BLACKLIST_VERSION.formatted(currentVersion, latestVersion, downloadLink));
-                logger.error(message);
+                logger.info(serializeToANSI(useBlacklistVersion(placeholder)));
                 return false;
             }
             case OUTDATED -> {
-                final String message = serializeToANSI(OUTDATED_VERSION.formatted(currentVersion, latestVersion, downloadLink));
-                logger.error(message);
+                logger.info(serializeToANSI(useOutdatedVersion(placeholder)));
                 return false;
             }
         }
         return true;
+    }
+
+    private String getMessagesFilePath() {
+        return "messages/" + config.lang + ".yml";
     }
 
     public static MyProperties getProperties() {
@@ -173,5 +217,9 @@ public class Main {
 
     public static Config getConfig() {
         return config;
+    }
+
+    public static Messages getMessages() {
+        return messages;
     }
 }

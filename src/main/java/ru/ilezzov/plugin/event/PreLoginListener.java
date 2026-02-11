@@ -15,18 +15,22 @@ package ru.ilezzov.plugin.event;
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+*/
 
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PreLoginEvent;
 import net.kyori.adventure.text.Component;
 import org.slf4j.Logger;
 import ru.ilezzov.plugin.Main;
-import ru.ilezzov.plugin.config.Config;
-import ru.ilezzov.plugin.utils.LegacySerialize;
+import ru.ilezzov.plugin.file.config.Config;
+import ru.ilezzov.plugin.manager.PlaceholderManager;
+import ru.ilezzov.plugin.message.PluginMessage;
+
+import static ru.ilezzov.plugin.utils.LegacySerialize.serializeToANSI;
 
 public class PreLoginListener {
     private final Logger logger;
+    private final PlaceholderManager placeholder = new PlaceholderManager();
 
     public PreLoginListener(final Logger logger) {
         this.logger = logger;
@@ -39,9 +43,11 @@ public class PreLoginListener {
         final Config config = Main.getConfig();
         final Config.VersionFilterSection versionFilterSection = config.versionFilter;
 
-        final Component reason = LegacySerialize.serialize(config.messages.kickReason);
+        final Component reason = PluginMessage.kickReason(placeholder);
         final boolean enableLogging = config.logging.enable;
-        final String message = config.logging.format.replace("{player}", event.getUsername()).replace("{protocol}", String.valueOf(protocolVersion)).replace("{minecraft_version}", event.getConnection().getProtocolVersion().getVersionIntroducedIn());
+
+        this.placeholder.addPlaceholder("<player>", event.getUsername()).addPlaceholder("<protocol>", protocolVersion).addPlaceholder("<minecraft-version>", event.getConnection().getProtocolVersion().getVersionIntroducedIn());
+        final String message = serializeToANSI(PluginMessage.loggingKick(placeholder));
 
 
         if (protocolVersion < versionFilterSection.minVersionProtocol) {
@@ -58,7 +64,6 @@ public class PreLoginListener {
 
         if (versionFilterSection.blockedProtocols.contains(protocolVersion)) {
             kick(event, reason, enableLogging, message);
-            return;
         }
     }
 
@@ -69,5 +74,4 @@ public class PreLoginListener {
             logger.info(message);
         }
     }
-
 }
